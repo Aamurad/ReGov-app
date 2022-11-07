@@ -1,5 +1,4 @@
 import { MongoClient } from 'mongodb'
-import * as fs from 'fs'
 
 const credentials: any = 'X509-cert-1959276760362529247.pem'
 const uri: any = process.env.MONGODB_URI
