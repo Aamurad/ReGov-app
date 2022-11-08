@@ -1,77 +1,228 @@
-import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import Link from 'next/link'
 
 export default function Signup() {
-    const router = useRouter()
     const [loading, isLoading] = useState(false)
 
-    async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function uploadFile(file: any) {
+        let formData = new FormData()
+        formData.append('file', file)
+        formData.append('upload_preset', 'documents')
+
+        const res = await fetch('https://api.cloudinary.com/v1_1/dfaulsyg0/image/upload', {
+            method: 'POST',
+            body: formData,
+        }).then((res) => res.json())
+        console.log(res)
+        return res
+    }
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        let idCardUrl = ''
+        let ppPhotoUrl = ''
         isLoading(true)
         e.preventDefault()
-        const body = {
-            username: e.currentTarget.email.value,
-            password: e.currentTarget.password.value,
-        }
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
+        let { idCard, ppPhoto, firstName, lastName, email, password, address, country, postCode } = e.currentTarget
+        await uploadFile(idCard.files[0]).then((res) => {
+            idCardUrl = res.url
         })
-        if (res.status === 200) {
-            const userObj = await res.json()
-            // mutate(userObj)
-        } else {
-            isLoading(false)
-            // setErrorMsg('Incorrect username or password. Try again!')
-        }
+        await uploadFile(ppPhoto.files[0]).then((res) => {
+            ppPhotoUrl = res.url
+        })
+
+        let formData = new FormData()
+        formData.append('idCard', idCardUrl)
+        formData.append('ppPhoto', ppPhotoUrl)
+        formData.append('firstName', firstName.value)
+        formData.append('lastName', lastName.value)
+        formData.append('email', email.value)
+        formData.append('password', password.value)
+        formData.append('address', address.value)
+        formData.append('country', country.value)
+        formData.append('postCode', postCode.value)
+
+        await fetch('/api/signup', {
+            method: 'POST',
+            body: formData,
+        })
     }
 
     return (
         <div className="flex min-h-full flex-col items-center justify-center py-2">
-            <div className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-                <div className="flex max-w-4xl rounded-2xl bg-white shadow-2xl lg:w-2/3">
-                    <div className="w-3/5 p-5">
+            <div className="flex w-full flex-col items-center justify-center text-center lg:px-20">
+                <div className="w-full rounded-2xl bg-white shadow-2xl lg:w-1/2">
+                    <div className=" p-5">
                         <div className="py-12">
-                            <form onSubmit={onSubmit}>
-                                <h2 className="text-3xl font-bold text-blue-400 ">Sign In</h2>
-                                <div className="mb-2 inline-block w-32 border-2 border-blue-400"></div>
-                                <div className="flex flex-col items-center pt-5">
+                            <div className="mb-4">
+                                <h2 className="text-3xl font-bold text-gray-900 ">Signup</h2>
+                                <div className="mb-2 inline-block w-32 border border-gray-900"></div>
+                            </div>
+
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-6 grid gap-6 md:grid-cols-2">
+                                    <div>
+                                        <label
+                                            htmlFor="firstName"
+                                            className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            First name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="firstName"
+                                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            placeholder="First Name"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="lastName"
+                                            className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Last name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="lastName"
+                                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            placeholder="Last Name"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="address"
+                                            className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Address
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="address"
+                                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            placeholder="Address"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="postCode"
+                                            className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Post Code
+                                        </label>
+                                        <input
+                                            type="number"
+                                            id="postCode"
+                                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            placeholder="12345"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="city"
+                                            className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            City
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="city"
+                                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            placeholder="Kuala Lumpur"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="country"
+                                            className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Country
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="country"
+                                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                            placeholder="Malaysia"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-6">
+                                    <label
+                                        htmlFor="email"
+                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                    >
+                                        Email address
+                                    </label>
                                     <input
                                         type="email"
-                                        placeholder="Email"
-                                        id={'email'}
-                                        className="mb-5 h-10 rounded-lg border-2 border-gray-300 px-5 focus:border-blue-400 focus:outline-none lg:w-80"
+                                        id="email"
+                                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                        placeholder="email@company.com"
+                                        required
                                     />
+                                </div>
+                                <div className="mb-6">
+                                    <label
+                                        htmlFor="password"
+                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                    >
+                                        Password
+                                    </label>
                                     <input
                                         type="password"
-                                        placeholder="Password"
-                                        id={'password'}
-                                        className="mb-5 h-10 rounded-lg border-2 border-gray-300 px-5 focus:border-blue-400 focus:outline-none lg:w-80"
+                                        id="password"
+                                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                        placeholder="•••••••••"
+                                        required
                                     />
-                                    <button className="inline-block rounded-full border-2 border-blue-400 px-12 py-2 font-semibold text-blue-400 transition duration-300 hover:bg-blue-400 hover:text-white">
-                                        {loading ? (
-                                            <div className="spinner-border" role="status">
-                                                <span className="visually-hidden">Loading...</span>
-                                            </div>
-                                        ) : (
-                                            <>Login</>
-                                        )}
-                                    </button>
                                 </div>
+                                <div className="mb-6">
+                                    <label
+                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        htmlFor="ppPhoto"
+                                    >
+                                        Passport Photo
+                                    </label>
+                                    <input
+                                        className="block w-full cursor-pointer rounded-lg border border-gray-300  text-sm  focus:outline-none "
+                                        id="ppPhoto"
+                                        type="file"
+                                        accept=".jpg, .jpeg, .png"
+                                    />
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">
+                                        .JPG, .JPEG or .PNG
+                                    </p>
+                                </div>
+                                <div className="mb-6">
+                                    <label
+                                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        htmlFor="idCard"
+                                    >
+                                        ID Photo
+                                    </label>
+                                    <input
+                                        className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none"
+                                        id="idCard"
+                                        type="file"
+                                        accept=".jpg, .jpeg, .png"
+                                    />
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">
+                                        .JPG, .JPEG or .PNG
+                                    </p>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="w-full rounded-lg border border-blue-400 bg-white px-5 py-2.5 text-center text-sm font-medium text-blue-400 text-white hover:bg-blue-400 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:w-auto"
+                                >
+                                    Submit
+                                </button>
                             </form>
                         </div>
-                    </div>
-                    <div className="w-2/5 rounded-br-2xl rounded-tr-2xl bg-blue-400 py-36 px-12 text-white">
-                        <h2 className="mb-2 text-3xl font-bold">Hello!</h2>
-                        <div className="mb-2 inline-block w-32 border-2 border-white"></div>
-                        <p className="mb-6">Have you signed up yet?</p>
-                        <Link
-                            href="/signup"
-                            className="inline-block rounded-full border-2 border-white px-12 py-2 font-semibold transition duration-300 hover:bg-white hover:text-blue-400"
-                        >
-                            Sign Up
-                        </Link>
                     </div>
                 </div>
             </div>

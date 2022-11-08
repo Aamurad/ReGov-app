@@ -29,7 +29,7 @@ export default function Login() {
 
     return (
         <div className="flex min-h-full flex-col items-center justify-center py-2">
-            <div className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
+            <div className="flex w-full flex-col items-center justify-center px-20 text-center">
                 <div className="flex max-w-4xl rounded-2xl bg-white shadow-2xl lg:w-2/3">
                     <div className="w-3/5 p-5">
                         <div className="py-12">

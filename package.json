@@ -6,6 +6,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "flowbite": "^1.5.3",
+    "flowbite-react": "^0.3.4",
     "form-data": "^4.0.0",
     "mailgun.js": "^8.0.2",
     "mongodb": "^4.4.1",

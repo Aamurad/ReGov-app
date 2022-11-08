@@ -15,11 +15,11 @@ export default function Navbar() {
                 <div className="mx-auto justify-between px-4 md:flex md:items-center md:px-8 lg:max-w-7xl">
                     <div>
                         <div className="flex items-center justify-between py-3 md:block md:py-5">
-                            <a href="#">
+                            <Link href="/" passHref>
                                 <h2 className="text-2xl font-bold text-white ">
                                     <span className="text">E</span>-Commerce
                                 </h2>
-                            </a>
+                            </Link>
                             <div className="md:hidden">
                                 <button
                                     className="rounded-md p-2 text-gray-700 outline-none focus:border focus:border-gray-400"
@@ -66,16 +66,16 @@ export default function Navbar() {
                         >
                             <ul className="items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0">
                                 <li className="text-white">
-                                    <Link href="/">Home</Link>
+                                    <Link href="/" passHref>Home</Link>
                                 </li>
                                 <li className="text-white">
-                                    <Link href="/blogs">Blogs</Link>
+                                    <Link href="/blogs" passHref>Blogs</Link>
                                 </li>
                                 <li className="text-white">
-                                    <Link href="/about">About US</Link>
+                                    <Link href="/about" passHref>About US</Link>
                                 </li>
                                 <li className="text-white">
-                                    <Link href="/contact">Contact US</Link>
+                                    <Link href="/contact" passHref>Contact US</Link>
                                 </li>
                             </ul>
                         </div>
